@@ -18,11 +18,11 @@ const Wrapper = styled.section`
   }
   p {
     margin: 0;
-    margin-top: 1rem;
+    margin-top: 1.2rem;
     text-align: center;
   }
   .btn {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
   }
   .member-btn {
     background: transparent;
