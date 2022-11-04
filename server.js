@@ -1,7 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
 
-import connectDB from "./db/connect.js";
 
 import notFoundMiddleware from "./middleware/not-found.js";
 import errorHandlerMiddleware from "./middleware/error-handler.js";
@@ -10,6 +9,10 @@ import authRouter from "./routes/authRoutes.js";
 import jobsRouter from "./routes/jobsRoutes.js";
 
 dotenv.config();
+import "express-async-errors";
+
+import connectDB from "./db/connect.js";
+
 
 const app = express();
 app.use(express.json());
