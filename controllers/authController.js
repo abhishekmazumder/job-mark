@@ -22,6 +22,7 @@ const register = asyncHandler(async (req, res) => {
       location: user.location,
     },
     token,
+    location: user.location
   });
 });
 
