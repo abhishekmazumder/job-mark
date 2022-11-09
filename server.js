@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import morgan from "morgan";
 
 import notFoundMiddleware from "./middleware/not-found.js";
 import errorHandlerMiddleware from "./middleware/error-handler.js";
@@ -12,9 +13,13 @@ dotenv.config();
 
 import connectDB from "./db/connect.js";
 
-const app = express();
-app.use(express.json());
 
+const app = express();
+
+if (process.env.NODE_ENV !== "production") {
+  app.use(morgan("dev"));
+}
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("Welcome");
