@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.route("/").post(createJob).get(getAllJobs);
 
-// rember about :id
+// remember about :id
 router.route("/stats").get(showStats);
 
 router.route("/:id").delete(deleteJob).patch(updateJob);
