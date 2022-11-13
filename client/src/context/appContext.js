@@ -170,6 +170,9 @@ const AppProvider = ({ children }) => {
           payload: { msg: error.response.data.msg },
         });
       }
+      if (error.response.status === 401) {
+        logoutUser();
+      }
     }
     clearAlert();
   };
