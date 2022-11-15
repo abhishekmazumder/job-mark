@@ -6,10 +6,14 @@ import {
   UnauthenticatedError,
 } from "../errors/index.js";
 import asyncHandler from "express-async-handler";
+import checkPermissions from '../utils/checkPermissions.js'
+
 
 const getAllJobs = asyncHandler(async (req, res) => {
   const jobs = await Job.find({ createdBy: req.user.userId });
-  res.status(StatusCodes.OK).json({ jobs, totalJobs: jobs.length, numOfPages: 1 });
+  res
+    .status(StatusCodes.OK)
+    .json({ jobs, totalJobs: jobs.length, numOfPages: 1 });
 });
 
 const createJob = asyncHandler(async (req, res) => {
@@ -23,12 +27,35 @@ const createJob = asyncHandler(async (req, res) => {
 });
 
 const updateJob = async (req, res) => {
-  res.send("Update created");
+  const { id: jobId } = req.params;
+  const { company, position } = req.body;
+  if (!position || !company) {
+    throw new BadRequestError("Please provide all values");
+  }
+  const job = await Job.findOne({ _id: jobId });
+  if (!job) {
+    throw new NotFoundError(`No job with id :${jobId}`);
+  }
+  // check permissions
+  checkPermissions(req.user, job.createdBy);
+  const updatedJob = await Job.findOneAndUpdate({ _id: jobId }, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(StatusCodes.OK).json({ updatedJob });
 };
 
 const deleteJob = async (req, res) => {
-  res.send("Delete created");
-};
+  const { id: jobId } = req.params
+  const job = await Job.findOne({ _id: jobId })
+  if (!job) {
+    throw new NotFoundError(`No job with id :${jobId}`)
+  }
+  checkPermissions(req.user, job.createdBy)
+  await job.remove()
+  res.status(StatusCodes.OK).json({ msg: 'Success! Job removed' })
+}
 
 const showStats = async (req, res) => {
   res.send("Show Stats");

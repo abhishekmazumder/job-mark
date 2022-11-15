@@ -18,7 +18,12 @@ import {
   CREATE_JOB_SUCCESS,
   CREATE_JOB_ERROR,
   GET_JOBS_BEGIN,
-  GET_JOBS_SUCCESS
+  GET_JOBS_SUCCESS,
+  SET_EDIT_JOB,
+  EDIT_JOB_BEGIN,
+  EDIT_JOB_SUCCESS,
+  EDIT_JOB_ERROR,
+  DELETE_JOB_BEGIN
 } from "./actions";
 
 import { initialState } from "./appContext";
@@ -165,7 +170,7 @@ const reducer = (state, action) => {
   }
 
   if (action.type === CREATE_JOB_BEGIN) {
-    return { ...state, isLoading: true }
+    return { ...state, isLoading: true };
   }
 
   if (action.type === CREATE_JOB_SUCCESS) {
@@ -173,22 +178,22 @@ const reducer = (state, action) => {
       ...state,
       isLoading: false,
       showAlert: true,
-      alertType: 'success',
-      alertText: 'New Job Created!',
-    }
+      alertType: "success",
+      alertText: "New Job Created!",
+    };
   }
   if (action.type === CREATE_JOB_ERROR) {
     return {
       ...state,
       isLoading: false,
       showAlert: true,
-      alertType: 'danger',
+      alertType: "danger",
       alertText: action.payload.msg,
-    }
+    };
   }
 
   if (action.type === GET_JOBS_BEGIN) {
-    return { ...state, isLoading: true, showAlert: false }
+    return { ...state, isLoading: true, showAlert: false };
   }
   if (action.type === GET_JOBS_SUCCESS) {
     return {
@@ -197,7 +202,49 @@ const reducer = (state, action) => {
       jobs: action.payload.jobs,
       totalJobs: action.payload.totalJobs,
       numOfPages: action.payload.numOfPages,
+    };
+  }
+
+  if (action.type === SET_EDIT_JOB) {
+    const job = state.jobs.find((job) => job._id === action.payload.id)
+    const { _id, position, company, jobLocation, jobType, status } = job
+    return {
+      ...state,
+      isEditing: true,
+      editJobId: _id,
+      position,
+      company,
+      jobLocation,
+      jobType,
+      status,
     }
+  }
+  if (action.type === EDIT_JOB_BEGIN) {
+    return {
+      ...state,
+      isLoading: true,
+    }
+  }
+  if (action.type === EDIT_JOB_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: 'success',
+      alertText: 'Job Updated!',
+    }
+  }
+  if (action.type === EDIT_JOB_ERROR) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: 'danger',
+      alertText: action.payload.msg,
+    }
+  }
+  if (action.type === DELETE_JOB_BEGIN) {
+    return { ...state, isLoading: true }
   }
 
   throw new Error(`No such action: ${action.type}`);
