@@ -44,7 +44,6 @@ const login = asyncHandler(async (req, res) => {
   const token = await user.createJWT();
   user.password = undefined;
   res.status(StatusCodes.OK).json({ user, token, location: user.location });
-  // res.send("Login User");
 });
 
 // UPDATE USER DETAILS
