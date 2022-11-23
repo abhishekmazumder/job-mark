@@ -25,7 +25,9 @@ import {
   EDIT_JOB_BEGIN,
   EDIT_JOB_SUCCESS,
   EDIT_JOB_ERROR,
-  DELETE_JOB_BEGIN
+  DELETE_JOB_BEGIN,
+  SHOW_STATS_BEGIN,
+  SHOW_STATS_SUCCESS,
 } from "./actions";
 import reducer from "./reducer";
 
@@ -57,6 +59,8 @@ const initialState = {
   totalJobs: 0,
   numOfPages: 1,
   page: 1,
+  stats: {},
+  monthlyApplications: [],
 };
 
 const AppContext = React.createContext();
@@ -257,7 +261,7 @@ const AppProvider = ({ children }) => {
     dispatch({ type: SET_EDIT_JOB, payload: { id } });
   };
 
-  const editJob = async() => {
+  const editJob = async () => {
     dispatch({ type: EDIT_JOB_BEGIN });
 
     try {
@@ -279,7 +283,7 @@ const AppProvider = ({ children }) => {
       });
     }
     clearAlert();
-  }
+  };
 
   const deleteJob = async (jobId) => {
     dispatch({ type: DELETE_JOB_BEGIN });
@@ -289,6 +293,24 @@ const AppProvider = ({ children }) => {
     } catch (error) {
       logoutUser();
     }
+  };
+
+  const showStats = async () => {
+    dispatch({ type: SHOW_STATS_BEGIN });
+    try {
+      const { data } = await authFetch("/jobs/stats");
+      dispatch({
+        type: SHOW_STATS_SUCCESS,
+        payload: {
+          stats: data.defaultStats,
+          monthlyApplications: data.monthlyApplications,
+        },
+      });
+    } catch (error) {
+      console.log(error.response);
+      logoutUser();
+    }
+    clearAlert();
   };
 
   return (
@@ -307,7 +329,8 @@ const AppProvider = ({ children }) => {
         getJobs,
         setEditJob,
         editJob,
-        deleteJob
+        deleteJob,
+        showStats,
       }}
     >
       {children}
