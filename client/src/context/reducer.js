@@ -26,7 +26,8 @@ import {
   DELETE_JOB_BEGIN,
   SHOW_STATS_BEGIN,
   SHOW_STATS_SUCCESS,
-  CLEAR_FILTERS
+  CLEAR_FILTERS,
+  CHANGE_PAGE,
 } from "./actions";
 
 import { initialState } from "./appContext";
@@ -153,6 +154,7 @@ const reducer = (state, action) => {
   if (action.type === HANDLE_CHANGE) {
     return {
       ...state,
+      page: 1,
       [action.payload.name]: action.payload.value,
     };
   }
@@ -209,8 +211,8 @@ const reducer = (state, action) => {
   }
 
   if (action.type === SET_EDIT_JOB) {
-    const job = state.jobs.find((job) => job._id === action.payload.id)
-    const { _id, position, company, jobLocation, jobType, status } = job
+    const job = state.jobs.find((job) => job._id === action.payload.id);
+    const { _id, position, company, jobLocation, jobType, status } = job;
     return {
       ...state,
       isEditing: true,
@@ -220,34 +222,34 @@ const reducer = (state, action) => {
       jobLocation,
       jobType,
       status,
-    }
+    };
   }
   if (action.type === EDIT_JOB_BEGIN) {
     return {
       ...state,
       isLoading: true,
-    }
+    };
   }
   if (action.type === EDIT_JOB_SUCCESS) {
     return {
       ...state,
       isLoading: false,
       showAlert: true,
-      alertType: 'success',
-      alertText: 'Job Updated!',
-    }
+      alertType: "success",
+      alertText: "Job Updated!",
+    };
   }
   if (action.type === EDIT_JOB_ERROR) {
     return {
       ...state,
       isLoading: false,
       showAlert: true,
-      alertType: 'danger',
+      alertType: "danger",
       alertText: action.payload.msg,
-    }
+    };
   }
   if (action.type === DELETE_JOB_BEGIN) {
-    return { ...state, isLoading: true }
+    return { ...state, isLoading: true };
   }
 
   if (action.type === SHOW_STATS_BEGIN) {
@@ -255,7 +257,7 @@ const reducer = (state, action) => {
       ...state,
       isLoading: true,
       showAlert: false,
-    }
+    };
   }
   if (action.type === SHOW_STATS_SUCCESS) {
     return {
@@ -263,17 +265,21 @@ const reducer = (state, action) => {
       isLoading: false,
       stats: action.payload.stats,
       monthlyApplications: action.payload.monthlyApplications,
-    }
+    };
   }
 
   if (action.type === CLEAR_FILTERS) {
     return {
       ...state,
-      search: '',
-      searchStatus: 'all',
-      searchType: 'all',
-      sort: 'latest',
-    }
+      search: "",
+      searchStatus: "all",
+      searchType: "all",
+      sort: "latest",
+    };
+  }
+
+  if (action.type === CHANGE_PAGE) {
+    return { ...state, page: action.payload.page };
   }
 
   throw new Error(`No such action: ${action.type}`);

@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import Loading from './Loading';
 import Job from './Job';
 import Wrapper from '../assetes/wrappers/JobsContainer';
-// import PageBtnContainer from './PageBtnContainer';
+import PageBtnContainer from './PageBtnContainer';
 
 const JobsContainer = () => {
   const {
@@ -43,7 +43,7 @@ const JobsContainer = () => {
           return <Job key={job._id} {...job} />;
         })}
       </div>
-      {numOfPages}
+      {numOfPages > 1 && <PageBtnContainer />}
     </Wrapper>
   );
 };
