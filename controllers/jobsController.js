@@ -12,7 +12,36 @@ import moment from "moment";
 
 // Get All Jobs :id
 const getAllJobs = asyncHandler(async (req, res) => {
-  const jobs = await Job.find({ createdBy: req.user.userId });
+  const { search, status, jobType, sort } = req.query;
+  const queryObject = {
+    createdBy: req.user.userId,
+  };
+  if (status && status !== "all") {
+    queryObject.status = status;
+  }
+  if (jobType && jobType !== "all") {
+    queryObject.jobType = jobType;
+  }
+  if (search && search) {
+    queryObject.position = { $regex: search, $options: "i" };
+  }
+  let result = Job.find(queryObject);
+
+  // SORTING THE JOBS
+  if (sort === 'latest') {
+    result = result.sort('-createdAt')
+  }
+  if (sort === 'oldest') {
+    result = result.sort('createdAt')
+  }
+  if (sort === 'a-z') {
+    result = result.sort('position')
+  }
+  if (sort === 'z-a') {
+    result = result.sort('-position')
+  }
+  
+  const jobs = await result;
   res
     .status(StatusCodes.OK)
     .json({ jobs, totalJobs: jobs.length, numOfPages: 1 });
@@ -67,7 +96,7 @@ const showStats = async (req, res) => {
     { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
     { $group: { _id: "$status", count: { $sum: 1 } } },
   ]);
-  
+
   stats = stats.reduce((acc, curr) => {
     const { _id: title, count } = curr;
     acc[title] = count;
@@ -89,7 +118,7 @@ const showStats = async (req, res) => {
       },
     },
     { $sort: { "_id.year": -1, "_id.month": -1 } },
-    { $limit: 6 },
+    { $limit: 12 },
   ]);
   monthlyApplications = monthlyApplications
     .map((item) => {
