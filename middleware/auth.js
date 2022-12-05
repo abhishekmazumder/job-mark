@@ -12,7 +12,7 @@ const auth = (req, res, next) => {
     // console.log(payload);
     // req.user = payload;  // Attaching user to request object
     req.user = { userId: payload.userId };
-    console.log(req.user);
+    // console.log(req.user);
     next();
   } catch (error) {
     throw new UnauthenticatedError("Authentication failed");
